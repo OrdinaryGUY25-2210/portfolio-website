@@ -2,21 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-bg: #0A0908;
+  --color-panel: #131110;
+  --color-panel2: #1A1714;
+  --color-hair: rgba(242,237,228,0.12);
+  --color-cream: #F2EDE4;
+  --color-mute: #9C9488;
+  --color-gold: #AB892C;
+  --color-gold-light: #C9A96A;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   body {
-    background-color: #0A0908;
-    color: #F2EDE4;
-    font-family: 'DM Sans', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-cream);
+    font-family: var(--font-body);
   }
   ::selection {
-    background: #AB892C;
-    color: #0A0908;
+    background: var(--color-gold);
+    color: var(--color-bg);
   }
   :focus-visible {
-    outline: 2px solid #C9A96A;
+    outline: 2px solid var(--color-gold-light);
     outline-offset: 3px;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -31,16 +44,17 @@
 
 @layer components {
   .eyebrow {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-body);
     letter-spacing: 0.08em;
-    color: #9C9488;
+    color: var(--color-mute);
     font-size: 0.8125rem;
   }
   .hairline {
-    border-color: rgba(242,237,228,0.12);
+    border-color: var(--color-hair);
   }
   .btn-gold {
-    @apply inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-gold-light;
+    @apply inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-medium transition-colors hover:bg-gold-light;
+    color: var(--color-bg);
   }
   .btn-ghost {
     @apply inline-flex items-center gap-2 rounded-full border hairline px-6 py-3 text-sm font-medium text-cream transition-colors hover:border-gold-light hover:text-gold-light;

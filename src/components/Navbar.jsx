@@ -1,21 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
-// Drawer slides from this side. Change to 'left' to flip it — the whole
-// site respects this single setting.
-const DRAWER_SIDE = 'right'
-
 const LINKS = [
   { label: 'Home', href: '#home' },
-  { label: 'Layanan', href: '#services' },
-  { label: 'Harga', href: '#pricing' },
+  { label: 'Pencapaian', href: '#achievements' },
   { label: 'Portfolio', href: '#portfolio' },
+  { label: 'Keahlian', href: '#services' },
   { label: 'Tentang', href: '#about' },
   { label: 'Kontak', href: '#contact' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ drawerSide = 'right', customPages = [] }) {
   const [open, setOpen] = useState(false)
   const closeBtnRef = useRef(null)
 
@@ -30,7 +26,13 @@ export default function Navbar() {
     }
   }, [open])
 
-  const drawerX = DRAWER_SIDE === 'right' ? { hidden: '100%', shown: 0 } : { hidden: '-100%', shown: 0 }
+  const drawerX = drawerSide === 'right' ? { hidden: '100%', shown: 0 } : { hidden: '-100%', shown: 0 }
+
+  const navPages = useMemo(
+    () => (customPages ?? []).filter((p) => p.show_in_nav).map((p) => ({ label: p.nav_label || p.title, href: `/${p.slug}` })),
+    [customPages]
+  )
+  const allLinks = [...LINKS, ...navPages]
 
   return (
     <>
@@ -76,7 +78,7 @@ export default function Navbar() {
               aria-modal="true"
               aria-label="Menu navigasi"
               className={`fixed inset-y-0 z-50 flex w-full max-w-sm flex-col justify-between border-hair bg-panel px-8 py-8 ${
-                DRAWER_SIDE === 'right' ? 'right-0 border-l' : 'left-0 border-r'
+                drawerSide === 'right' ? 'right-0 border-l' : 'left-0 border-r'
               }`}
               initial={{ x: drawerX.hidden }}
               animate={{ x: drawerX.shown }}
@@ -97,7 +99,7 @@ export default function Navbar() {
                   </button>
                 </div>
                 <nav className="mt-12 flex flex-col gap-1">
-                  {LINKS.map((l) => (
+                  {allLinks.map((l) => (
                     <a
                       key={l.href}
                       href={l.href}

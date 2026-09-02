@@ -2,20 +2,31 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import { useSiteContent } from '../lib/useSiteContent'
 import { defaultContent } from '../lib/defaultContent'
+import { FONT_PAIRS } from '../components/ThemeProvider'
 
-const TABS = ['Portfolio', 'Testimoni', 'Konten Website']
-const CONTENT_SECTIONS = Object.keys(defaultContent)
+const NAV = [
+  { key: 'portfolio', label: 'Portfolio' },
+  { key: 'achievements', label: 'Pencapaian' },
+  { key: 'testimonials', label: 'Testimoni' },
+  { key: 'content', label: 'Konten Website' },
+  { key: 'appearance', label: 'Tampilan' },
+  { key: 'pages', label: 'Halaman & Section' },
+]
 
-const emptyPortfolioItem = { title: '', category: '', description: '', image_url: '', link_url: '', sort_order: 0 }
+const CONTENT_SECTIONS = Object.keys(defaultContent).filter((s) => s !== 'theme')
+
+const emptyPortfolioItem = { title: '', category: '', role: '', year: '', description: '', image_url: '', link_url: '', sort_order: 0 }
+const emptyAchievement = { title: '', issuer: '', year: '', description: '', sort_order: 0 }
 const emptyTestimonial = { name: '', role: '', quote: '', avatar_url: '', sort_order: 0 }
+const emptySection = { title: '', subtitle: '', body: '', image_url: '', cta_label: '', cta_href: '', sort_order: 0 }
+const emptyPage = { slug: '', title: '', subtitle: '', body: '', image_url: '', nav_label: '', show_in_nav: true, sort_order: 0 }
 
-export default function DeveloperDashboard() {
+export default function DeveloperDashboard({ site }) {
   const { signOut } = useAuth()
   const navigate = useNavigate()
-  const { content, portfolio, testimonials, loading, reload } = useSiteContent()
-  const [tab, setTab] = useState('Portfolio')
+  const { content, portfolio, testimonials, achievements, customSections, customPages, loading, reload } = site
+  const [tab, setTab] = useState('portfolio')
 
   const onSignOut = async () => {
     await signOut()
@@ -35,54 +46,80 @@ export default function DeveloperDashboard() {
         </div>
       </header>
 
-      <div className="border-b hairline px-6">
-        <nav className="mx-auto flex max-w-6xl gap-6">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={`border-b-2 py-4 text-sm ${tab === t ? 'border-gold-light text-cream' : 'border-transparent text-mute'}`}
-            >
-              {t}
-            </button>
-          ))}
-        </nav>
-      </div>
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 md:flex-row">
+        <aside className="shrink-0 md:w-48">
+          <nav className="flex flex-row flex-wrap gap-2 md:flex-col">
+            {NAV.map((n) => (
+              <button
+                key={n.key}
+                type="button"
+                onClick={() => setTab(n.key)}
+                className={`rounded-lg px-3 py-2 text-left text-sm ${
+                  tab === n.key ? 'bg-panel text-gold-light' : 'text-mute hover:text-cream'
+                }`}
+              >
+                {n.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        {loading ? (
-          <p className="text-sm text-mute">Memuat data…</p>
-        ) : (
-          <>
-            {tab === 'Portfolio' && <CollectionEditor table="portfolio_items" items={portfolio} emptyItem={emptyPortfolioItem} onSaved={reload}
-              fields={[
-                { name: 'title', label: 'Judul' },
-                { name: 'category', label: 'Kategori' },
-                { name: 'description', label: 'Deskripsi', textarea: true },
-                { name: 'image_url', label: 'URL Gambar' },
-                { name: 'link_url', label: 'URL Project (opsional)' },
-                { name: 'sort_order', label: 'Urutan', number: true },
-              ]}
-            />}
-            {tab === 'Testimoni' && <CollectionEditor table="testimonials" items={testimonials} emptyItem={emptyTestimonial} onSaved={reload}
-              fields={[
-                { name: 'name', label: 'Nama' },
-                { name: 'role', label: 'Role / Jabatan' },
-                { name: 'quote', label: 'Testimoni', textarea: true },
-                { name: 'avatar_url', label: 'URL Foto (opsional)' },
-                { name: 'sort_order', label: 'Urutan', number: true },
-              ]}
-            />}
-            {tab === 'Konten Website' && <ContentEditor content={content} onSaved={reload} />}
-          </>
-        )}
-      </main>
+        <main className="min-w-0 flex-1">
+          {loading ? (
+            <p className="text-sm text-mute">Memuat data…</p>
+          ) : (
+            <>
+              {tab === 'portfolio' && (
+                <CollectionEditor table="portfolio_items" items={portfolio} emptyItem={emptyPortfolioItem} onSaved={reload}
+                  titleKey="title"
+                  fields={[
+                    { name: 'title', label: 'Judul', example: 'Company Profile — Kopi Nusantara' },
+                    { name: 'category', label: 'Kategori', example: 'UI/UX Design' },
+                    { name: 'role', label: 'Peran / Yang Dikerjakan', example: 'Design & Development' },
+                    { name: 'year', label: 'Tahun', example: '2026' },
+                    { name: 'description', label: 'Deskripsi', textarea: true, example: 'Website company profile untuk brand kopi lokal, fokus pada storytelling produk.' },
+                    { name: 'image_url', label: 'URL Gambar', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/kopi-nusantara.jpg' },
+                    { name: 'link_url', label: 'URL Project (opsional)', example: 'https://kopinusantara.com' },
+                    { name: 'sort_order', label: 'Urutan', number: true, example: '1 (angka lebih kecil tampil lebih dulu)' },
+                  ]}
+                />
+              )}
+              {tab === 'achievements' && (
+                <CollectionEditor table="achievements" items={achievements} emptyItem={emptyAchievement} onSaved={reload}
+                  titleKey="title"
+                  fields={[
+                    { name: 'title', label: 'Judul Pencapaian', example: '8+ Tahun Freelance' },
+                    { name: 'issuer', label: 'Konteks / Pemberi (opsional)', example: 'Studio D13' },
+                    { name: 'year', label: 'Tahun (opsional)', example: '2018 — sekarang' },
+                    { name: 'description', label: 'Deskripsi', textarea: true, example: 'Konsisten menangani project desain & web dari klien lokal hingga internasional.' },
+                    { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
+                  ]}
+                />
+              )}
+              {tab === 'testimonials' && (
+                <CollectionEditor table="testimonials" items={testimonials} emptyItem={emptyTestimonial} onSaved={reload}
+                  titleKey="name"
+                  fields={[
+                    { name: 'name', label: 'Nama', example: 'Budi Santoso' },
+                    { name: 'role', label: 'Role / Jabatan', example: 'Pemilik Kopi Nusantara' },
+                    { name: 'quote', label: 'Testimoni', textarea: true, example: 'Prosesnya jelas dari awal sampai akhir, hasilnya sesuai brief.' },
+                    { name: 'avatar_url', label: 'URL Foto (opsional)', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/budi.jpg' },
+                    { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
+                  ]}
+                />
+              )}
+              {tab === 'content' && <ContentEditor content={content} onSaved={reload} />}
+              {tab === 'appearance' && <AppearanceEditor theme={content.theme} onSaved={reload} />}
+              {tab === 'pages' && <PagesEditor customSections={customSections} customPages={customPages} onSaved={reload} />}
+            </>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
 
-function CollectionEditor({ table, items, emptyItem, fields, onSaved }) {
+function CollectionEditor({ table, items, emptyItem, fields, onSaved, titleKey = 'title' }) {
   const [editingId, setEditingId] = useState(null)
   const [draft, setDraft] = useState(emptyItem)
   const [saving, setSaving] = useState(false)
@@ -127,7 +164,7 @@ function CollectionEditor({ table, items, emptyItem, fields, onSaved }) {
 
       {editingId && (
         <div className="mt-6 rounded-2xl border hairline bg-panel p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             {fields.map((f) => (
               <div key={f.name} className={f.textarea ? 'sm:col-span-2' : ''}>
                 <label className="eyebrow uppercase">{f.label}</label>
@@ -138,6 +175,15 @@ function CollectionEditor({ table, items, emptyItem, fields, onSaved }) {
                     onChange={(e) => setDraft((d) => ({ ...d, [f.name]: e.target.value }))}
                     className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
                   />
+                ) : f.checkbox ? (
+                  <div className="mt-2">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(draft[f.name])}
+                      onChange={(e) => setDraft((d) => ({ ...d, [f.name]: e.target.checked }))}
+                      className="h-4 w-4"
+                    />
+                  </div>
                 ) : (
                   <input
                     type={f.number ? 'number' : 'text'}
@@ -146,6 +192,7 @@ function CollectionEditor({ table, items, emptyItem, fields, onSaved }) {
                     className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
                   />
                 )}
+                {f.example && <p className="mt-1.5 text-xs text-mute">Contoh: {f.example}</p>}
               </div>
             ))}
           </div>
@@ -163,8 +210,8 @@ function CollectionEditor({ table, items, emptyItem, fields, onSaved }) {
         {items.map((item) => (
           <li key={item.id} className="flex items-center justify-between gap-4 py-4">
             <div className="min-w-0">
-              <p className="truncate text-sm text-cream">{item.title ?? item.name}</p>
-              <p className="truncate text-xs text-mute">{item.category ?? item.role}</p>
+              <p className="truncate text-sm text-cream">{item[titleKey] || item.title || item.name}</p>
+              <p className="truncate text-xs text-mute">{item.category ?? item.role ?? item.issuer ?? item.slug}</p>
             </div>
             <div className="flex shrink-0 gap-3 text-xs">
               <button type="button" onClick={() => startEdit(item)} className="text-mute hover:text-gold-light">Edit</button>
@@ -225,7 +272,7 @@ function ContentEditor({ content, onSaved }) {
       </nav>
       <div>
         <p className="text-sm text-mute">
-          Edit bagian <span className="text-cream">{section}</span> sebagai JSON, lalu simpan. Struktur mengikuti bentuk data section ini di halaman utama.
+          Edit bagian <span className="text-cream">{section}</span> sebagai JSON, lalu simpan. Contoh: ganti teks di antara tanda kutip <code>"..."</code>, jangan hapus tanda kurung <code>{'{ }'}</code> atau <code>[ ]</code>.
         </p>
         <textarea
           rows={20}
@@ -238,6 +285,163 @@ function ContentEditor({ content, onSaved }) {
         <button type="button" onClick={save} disabled={saving} className="btn-gold mt-4 !py-2 !px-5 text-xs disabled:opacity-60">
           {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
         </button>
+      </div>
+    </div>
+  )
+}
+
+function AppearanceEditor({ theme, onSaved }) {
+  const [draft, setDraft] = useState(theme)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const set = (key, value) => setDraft((d) => ({ ...d, [key]: value }))
+
+  const save = async () => {
+    setSaving(true)
+    setError('')
+    const { error: saveError } = await supabase
+      .from('site_content')
+      .upsert({ section: 'theme', data: draft }, { onConflict: 'section' })
+    setSaving(false)
+    if (saveError) setError(saveError.message)
+    else onSaved()
+  }
+
+  const colorFields = [
+    { key: 'bg', label: 'Warna Background', example: '#0A0908' },
+    { key: 'panel', label: 'Warna Panel / Kartu', example: '#131110' },
+    { key: 'cream', label: 'Warna Teks Utama', example: '#F2EDE4' },
+    { key: 'mute', label: 'Warna Teks Sekunder', example: '#9C9488' },
+    { key: 'gold', label: 'Warna Aksen', example: '#AB892C' },
+    { key: 'goldLight', label: 'Warna Aksen (Hover/Highlight)', example: '#C9A96A' },
+  ]
+
+  return (
+    <div className="max-w-xl">
+      <p className="text-sm text-mute">Ubah warna, tipografi, dan posisi menu — berlaku langsung tanpa perlu deploy ulang.</p>
+
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">
+        {colorFields.map((f) => (
+          <div key={f.key}>
+            <label className="eyebrow uppercase">{f.label}</label>
+            <div className="mt-2 flex items-center gap-3">
+              <input
+                type="color"
+                value={draft[f.key] ?? f.example}
+                onChange={(e) => set(f.key, e.target.value)}
+                className="h-10 w-10 shrink-0 cursor-pointer rounded border hairline bg-transparent"
+              />
+              <input
+                type="text"
+                value={draft[f.key] ?? ''}
+                onChange={(e) => set(f.key, e.target.value)}
+                className="w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
+              />
+            </div>
+            <p className="mt-1.5 text-xs text-mute">Contoh: {f.example}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8">
+        <label className="eyebrow uppercase">Pasangan Font</label>
+        <select
+          value={draft.fontPair}
+          onChange={(e) => set('fontPair', e.target.value)}
+          className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
+        >
+          {Object.entries(FONT_PAIRS).map(([key, pair]) => (
+            <option key={key} value={key} className="bg-panel">{pair.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="mt-8">
+        <label className="eyebrow uppercase">Posisi Menu (Drawer)</label>
+        <div className="mt-2 flex gap-3">
+          {['right', 'left'].map((side) => (
+            <button
+              key={side}
+              type="button"
+              onClick={() => set('drawerSide', side)}
+              className={`rounded-full border px-4 py-2 text-xs capitalize ${
+                draft.drawerSide === side ? 'border-gold-light text-gold-light' : 'hairline text-mute'
+              }`}
+            >
+              {side === 'right' ? 'Kanan' : 'Kiri'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error && <p className="mt-4 text-sm text-gold-light">{error}</p>}
+      <button type="button" onClick={save} disabled={saving} className="btn-gold mt-8 !py-2 !px-5 text-xs disabled:opacity-60">
+        {saving ? 'Menyimpan…' : 'Simpan Tampilan'}
+      </button>
+    </div>
+  )
+}
+
+function PagesEditor({ customSections, customPages, onSaved }) {
+  const [subTab, setSubTab] = useState('sections')
+
+  return (
+    <div>
+      <div className="flex gap-2">
+        <button type="button" onClick={() => setSubTab('sections')}
+          className={`rounded-full border px-4 py-2 text-xs ${subTab === 'sections' ? 'border-gold-light text-gold-light' : 'hairline text-mute'}`}>
+          Tambah Section
+        </button>
+        <button type="button" onClick={() => setSubTab('pages')}
+          className={`rounded-full border px-4 py-2 text-xs ${subTab === 'pages' ? 'border-gold-light text-gold-light' : 'hairline text-mute'}`}>
+          Tambah Halaman
+        </button>
+      </div>
+
+      <div className="mt-6">
+        {subTab === 'sections' ? (
+          <>
+            <p className="text-sm text-mute">
+              Section baru tampil di halaman utama, setelah FAQ dan sebelum footer, urut sesuai kolom Urutan.
+            </p>
+            <div className="mt-6">
+              <CollectionEditor table="custom_sections" items={customSections} emptyItem={emptySection} onSaved={onSaved}
+                titleKey="title"
+                fields={[
+                  { name: 'title', label: 'Judul Section', example: 'Proses Kolaborasi' },
+                  { name: 'subtitle', label: 'Eyebrow / Label Kecil (opsional)', example: 'TAMBAHAN' },
+                  { name: 'body', label: 'Isi / Paragraf', textarea: true, example: 'Jelaskan section ini dalam beberapa kalimat. Baris baru akan tetap terlihat di halaman.' },
+                  { name: 'image_url', label: 'URL Gambar (opsional)', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/section.jpg' },
+                  { name: 'cta_label', label: 'Teks Tombol (opsional)', example: 'Pelajari Lebih Lanjut' },
+                  { name: 'cta_href', label: 'Link Tombol (opsional)', example: '#contact atau https://...' },
+                  { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
+                ]}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-sm text-mute">
+              Halaman baru bisa diakses di <code>domain-anda.com/slug</code>. Centang "Tampilkan di Menu" supaya muncul di navigasi.
+            </p>
+            <div className="mt-6">
+              <CollectionEditor table="custom_pages" items={customPages} emptyItem={emptyPage} onSaved={onSaved}
+                titleKey="title"
+                fields={[
+                  { name: 'slug', label: 'Slug URL (huruf kecil, tanpa spasi)', example: 'sertifikat' },
+                  { name: 'title', label: 'Judul Halaman', example: 'Sertifikat & Pelatihan' },
+                  { name: 'nav_label', label: 'Label di Menu (opsional)', example: 'Sertifikat' },
+                  { name: 'subtitle', label: 'Eyebrow / Label Kecil (opsional)', example: 'DOKUMENTASI' },
+                  { name: 'body', label: 'Isi Halaman', textarea: true, example: 'Tulis isi lengkap halaman ini. Baris baru akan tetap terlihat.' },
+                  { name: 'image_url', label: 'URL Gambar (opsional)', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/sertifikat.jpg' },
+                  { name: 'show_in_nav', label: 'Tampilkan di Menu', checkbox: true },
+                  { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
+                ]}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

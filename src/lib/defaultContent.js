@@ -1,12 +1,26 @@
 // Fallback content — used the moment the site loads and whenever a row is
 // missing from Supabase `site_content`. Edit these directly for a quick
 // content change without touching the database, or use Developer Mode.
+//
+// This site is framed as a PORTFOLIO first: what Aldi has built, what he's
+// capable of, and proof of it — not a sales landing page. Achievements and
+// Portfolio carry the most weight; Services/Pricing/Process support it.
 export const defaultContent = {
+  theme: {
+    fontPair: 'fraunces-dmsans', // 'fraunces-dmsans' | 'playfair-inter' | 'cormorant-worksans'
+    gold: '#AB892C',
+    goldLight: '#C9A96A',
+    bg: '#0A0908',
+    panel: '#131110',
+    cream: '#F2EDE4',
+    mute: '#9C9488',
+    drawerSide: 'right', // 'right' | 'left'
+  },
   hero: {
-    eyebrow: 'Graphic Designer · UI/UX · Digital Studio',
+    eyebrow: 'Portfolio · Graphic Design · UI/UX · No-Code Dev',
     nameLine1: 'Muh Aldi',
     nameLine2: 'Triantama',
-    ctaLabel: 'Lihat Portfolio',
+    ctaLabel: 'Lihat Karya',
     ctaHref: '#portfolio',
     yearsLabel: 'Years EXP',
     years: '8+',
@@ -18,18 +32,18 @@ export const defaultContent = {
     { label: 'Client Puas', value: '90+' },
   ],
   services: {
-    eyebrow: 'LAYANAN',
-    title: 'Apa Yang Saya Tawarkan',
+    eyebrow: 'KEAHLIAN',
+    title: 'Apa Yang Saya Kerjakan',
     items: [
       {
         title: 'Graphic Design',
         description:
-          'Branding, logo, packaging, poster, dan social media kit yang membangun identitas visual bisnis Anda dari nol.',
+          'Branding, logo, packaging, poster, dan social media kit — dibangun dari riset identitas visual, bukan sekadar template.',
       },
       {
         title: 'UI/UX & Web',
         description:
-          'Wireframe, prototype interaktif, desain antarmuka aplikasi dan website siap publish via Framer atau Next.js.',
+          'Wireframe, prototype interaktif, desain antarmuka aplikasi, dan website siap publish via Framer atau React.',
       },
       {
         title: 'Foto & Video',
@@ -47,7 +61,7 @@ export const defaultContent = {
     eyebrow: 'HARGA',
     title: 'Paket Harga',
     subtitle:
-      'Transparan dari awal — pilih paket yang paling pas, atau diskusikan kebutuhan custom.',
+      'Untuk yang sudah lihat karya dan siap kolaborasi — ini gambaran scope dan durasinya.',
     tiers: [
       {
         name: 'Landing Page',
@@ -111,7 +125,7 @@ export const defaultContent = {
     eyebrow: 'STUDIO',
     title: 'Tentang Studio D13',
     quote: 'Desain yang baik bukan hanya indah — ia memecahkan masalah dan membangun kepercayaan.',
-    body: 'Bagi saya, desain bukan sekadar mempercantik tampilan — tapi alat bisnis yang bekerja untuk brand Anda.',
+    body: 'Bagi saya, desain bukan sekadar mempercantik tampilan — tapi alat bisnis yang bekerja untuk brand Anda. Portfolio ini sendiri adalah contohnya: dibangun, bukan cuma dipajang.',
     skills: ['Framer', 'Figma', 'Adobe Suite', 'UI/UX Design', 'Brand Identity', 'Photography', 'Videography'],
   },
   contact: {
@@ -133,7 +147,7 @@ export const defaultContent = {
   },
   footer: {
     brand: 'Studio D13',
-    tagline: 'Studio desain kreatif berbasis di Palu, Sulawesi Tengah. Graphic design, UI/UX, Framer templates & digital products.',
+    tagline: 'Portfolio & studio desain kreatif berbasis di Palu, Sulawesi Tengah. Graphic design, UI/UX, dan produk digital.',
     location: 'Palu, Sulawesi Tengah 🇮🇩',
     social: [
       { label: 'Instagram', href: '#' },
@@ -145,12 +159,23 @@ export const defaultContent = {
   },
 }
 
+// Achievements — the "proof" section of a portfolio: awards, milestones,
+// certifications, notable placements. Shown right after Hero.
+export const defaultAchievements = [
+  { id: 'seed-1', title: '8+ Tahun Freelance', issuer: 'Studio D13', year: '2018 — sekarang', description: 'Konsisten menangani project desain & web dari klien lokal hingga internasional.', sort_order: 1 },
+  { id: 'seed-2', title: '120+ Project Selesai', issuer: 'Berbagai klien', year: '', description: 'Mulai dari branding UMKM, landing page, hingga sistem web custom.', sort_order: 2 },
+  { id: 'seed-3', title: 'Ebook Series — UI/UX & Visual Creator Master Guide', issuer: 'Studio D13', year: '2026', description: 'Menulis dan mendesain dua ebook panduan dengan sistem desain Fraunces/DM Sans.', sort_order: 3 },
+]
+
 export const defaultPortfolioItems = [
-  { id: 'seed-1', title: 'Company Profile — Kopi Nusantara', category: 'UI/UX Design', description: 'Website company profile untuk brand kopi lokal.', image_url: '', link_url: '', sort_order: 1 },
-  { id: 'seed-2', title: 'Brand Identity — Playbox Palu', category: 'Brand Identity', description: 'Logo dan identitas visual untuk bisnis rental PlayStation.', image_url: '', link_url: '', sort_order: 2 },
-  { id: 'seed-3', title: 'Landing Page — Studio D13', category: 'Framer Template', description: 'Landing page portfolio dengan efek reveal dan grid masonry.', image_url: '', link_url: '', sort_order: 3 },
+  { id: 'seed-1', title: 'Company Profile — Kopi Nusantara', category: 'UI/UX Design', role: 'Design & Development', year: '2026', description: 'Website company profile untuk brand kopi lokal.', image_url: '', link_url: '', sort_order: 1 },
+  { id: 'seed-2', title: 'Brand Identity — Playbox Palu', category: 'Brand Identity', role: 'Branding', year: '2026', description: 'Logo dan identitas visual untuk bisnis rental PlayStation.', image_url: '', link_url: '', sort_order: 2 },
+  { id: 'seed-3', title: 'Landing Page — Studio D13', category: 'Framer Template', role: 'Design & Development', year: '2026', description: 'Landing page portfolio dengan efek reveal dan grid masonry.', image_url: '', link_url: '', sort_order: 3 },
 ]
 
 export const defaultTestimonials = [
   { id: 'seed-1', name: 'Klien Studio D13', role: 'Pemilik Bisnis', quote: 'Prosesnya jelas dari awal sampai akhir, hasilnya sesuai brief.', avatar_url: '', sort_order: 1 },
 ]
+
+export const defaultCustomSections = []
+export const defaultCustomPages = []

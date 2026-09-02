@@ -1,11 +1,12 @@
 # Studio D13 — Website (React + Supabase)
 
-Website portfolio Studio D13, hasil convert dari HTML/Framer ke React, dengan:
+Website portfolio Studio D13 — dibangun agar bekerja **sebagai portfolio**: memimpin dengan Pencapaian (bukti) dan Portfolio (karya), baru layanan/harga di bawahnya. Fitur:
 - Efek reveal saat scroll di setiap section
-- Menu navigasi slide-in dari kanan (bisa diubah ke kiri, lihat catatan di bawah)
+- Menu navigasi slide-in (posisi kanan/kiri diatur dari Developer Mode)
 - Halaman login terpisah di `/developer` untuk masuk ke **Developer Mode**
-- Di Developer Mode: tambah/edit/hapus **portfolio item**, **testimoni**, dan edit isi **semua section** (hero, layanan, harga, proses, about, kontak, FAQ, footer)
-- Data disimpan di **Supabase** (database + auth), bukan disimpan di kode — jadi bisa diedit tanpa deploy ulang
+- Di Developer Mode: sidebar dengan 6 kontrol — **Portfolio**, **Pencapaian**, **Testimoni**, **Konten Website**, **Tampilan** (warna & font, tanpa deploy ulang), dan **Halaman & Section** (tambah section baru di homepage, atau tambah halaman baru dengan URL sendiri)
+- Setiap kolom form di Developer Mode punya contoh pengisian di bawahnya
+- Data disimpan di **Supabase** (database + auth) — bisa diedit tanpa deploy ulang
 - Responsif dan accessible di semua device (mobile, tablet, desktop) — kontras warna, fokus keyboard terlihat, dan menghormati pengaturan "reduced motion" di perangkat
 
 Semua langkah di bawah ini dilakukan lewat **browser** — tidak perlu install Node.js, git, atau apapun di komputer Anda.
@@ -56,17 +57,58 @@ Setiap kali Anda mengubah file di GitHub (lewat browser, edit langsung di github
 
 ---
 
+## 3b. Alternatif lain selain Vercel
+
+Vercel sebenarnya mendukung banyak project terpisah dalam satu akun — project ini tidak akan bentrok dengan webapp personal Anda yang sudah ada di sana. Tapi kalau tetap mau pisah platform, ini pilihannya (semua gratis, semua lewat browser):
+
+- **Netlify** — lihat langkah di bawah.
+- **Cloudflare Pages** ([pages.cloudflare.com](https://pages.cloudflare.com)) — alur mirip Vercel: hubungkan repo GitHub, set build command `npm run build`, publish directory `dist`, tambahkan env variables di **Settings → Environment variables**.
+- **Firebase Hosting** — perlu Firebase CLI, jadi kurang cocok kalau mau tanpa install lokal.
+- **Render (Static Site)** ([render.com](https://render.com)) — hubungkan repo GitHub, build command `npm run build`, publish directory `dist`.
+
+### Deploy ke Netlify — Cara 1: lewat GitHub (disarankan, auto-update)
+
+1. Upload project ini ke repository GitHub baru (ikuti Langkah 2 di atas — repo ini independen, tidak menyentuh project Vercel Anda yang lain).
+2. Buka [app.netlify.com](https://app.netlify.com) → login → **Add new site → Import an existing project**.
+3. Pilih GitHub → pilih repository `studio-d13-website`.
+4. Build settings biasanya otomatis terdeteksi dari `netlify.toml` di project ini:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+5. Sebelum deploy, buka **Site configuration → Environment variables**, tambahkan:
+   | Key | Value |
+   |---|---|
+   | `VITE_SUPABASE_URL` | Project URL dari Supabase |
+   | `VITE_SUPABASE_ANON_KEY` | anon public key dari Supabase |
+6. Klik **Deploy site**. Setiap kali file di GitHub diubah, Netlify auto build ulang — sama seperti Vercel.
+
+### Deploy ke Netlify — Cara 2: Drag & Drop (tanpa GitHub sama sekali)
+
+Cara ini paling cepat kalau tidak mau pakai GitHub, tapi env variable Supabase harus sudah "dibakar" ke dalam file build terlebih dahulu (karena tidak ada proses build di sisi Netlify untuk metode ini).
+
+1. Beri tahu saya `VITE_SUPABASE_URL` dan `VITE_SUPABASE_ANON_KEY` project Supabase Anda — saya build folder `dist` yang sudah jadi dan siap pakai.
+2. Buka [app.netlify.com/drop](https://app.netlify.com/drop).
+3. Drag & drop folder `dist` tersebut ke halaman itu.
+4. Netlify langsung memberi URL live dalam beberapa detik.
+5. Catatan: kalau nanti ganti Supabase project (URL/key berubah), folder `dist` perlu di-build ulang dan di-drop ulang — beda dengan Cara 1 yang otomatis.
+
+---
+
 ## 4. Pakai Developer Mode
 
 1. Buka `https://domain-anda.com/developer`.
 2. Login dengan email + password yang dibuat di langkah 1.4 (Supabase Authentication).
-3. Di dashboard ada 3 tab:
-   - **Portfolio** — tambah/edit/hapus karya (judul, kategori, deskripsi, URL gambar, link project).
+3. Di sidebar dashboard ada 6 kontrol:
+   - **Portfolio** — tambah/edit/hapus karya. Setiap kolom (judul, kategori, peran, tahun, deskripsi, URL gambar, link project, urutan) punya contoh pengisian di bawahnya.
+   - **Pencapaian** — bagian "bukti" portfolio: milestone, sertifikasi, penghargaan. Tampil tepat setelah Hero.
    - **Testimoni** — tambah/edit/hapus testimoni klien.
-   - **Konten Website** — pilih section (hero, layanan, harga, proses, about, kontak, faq, footer) dan edit isinya sebagai JSON, lalu simpan. Struktur JSON mengikuti bentuk data yang tampil di halaman utama, jadi tinggal ubah teks di dalam tanda kutip.
+   - **Konten Website** — pilih section (hero, layanan, harga, proses, about, kontak, faq, footer) dan edit isinya sebagai JSON, lalu simpan.
+   - **Tampilan** — ubah warna background/aksen (color picker), pilih pasangan font dari 3 opsi, dan ubah posisi menu (kanan/kiri) — berlaku langsung tanpa deploy ulang.
+   - **Halaman & Section** — dua kontrol:
+     - *Tambah Section*: menambah blok konten baru di homepage (judul, isi, gambar, tombol opsional), muncul setelah FAQ.
+     - *Tambah Halaman*: membuat halaman baru dengan URL sendiri (`domain-anda.com/slug-anda`), bisa dimunculkan di menu navigasi.
 4. Perubahan langsung tampil di website publik setelah disimpan (tidak perlu deploy ulang).
 
-Untuk gambar (foto project, avatar testimoni), upload dulu ke layanan hosting gambar mana pun (Supabase Storage, Imgur, dll), lalu tempel URL-nya ke field "URL Gambar".
+Untuk gambar (foto project, avatar testimoni, gambar section), upload dulu ke layanan hosting gambar mana pun (Supabase Storage, Imgur, dll), lalu tempel URL-nya ke field "URL Gambar".
 
 ---
 

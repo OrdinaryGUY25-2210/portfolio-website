@@ -4,20 +4,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#0A0908',
-        panel: '#131110',
-        panel2: '#1A1714',
-        hair: 'rgba(242,237,228,0.12)',
-        cream: '#F2EDE4',
-        mute: '#9C9488',
+        ink: 'var(--color-bg)',
+        panel: 'var(--color-panel)',
+        panel2: 'var(--color-panel2)',
+        hair: 'var(--color-hair)',
+        cream: 'var(--color-cream)',
+        mute: 'var(--color-mute)',
         gold: {
-          light: '#C9A96A',
-          DEFAULT: '#AB892C',
+          light: 'var(--color-gold-light)',
+          DEFAULT: 'var(--color-gold)',
         },
       },
       fontFamily: {
-        display: ['Fraunces', 'serif'],
-        body: ['"DM Sans"', 'sans-serif'],
+        display: 'var(--font-display)',
+        body: 'var(--font-body)',
       },
       maxWidth: {
         prose: '68ch',

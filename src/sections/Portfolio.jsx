@@ -73,6 +73,11 @@ export default function Portfolio({ items }) {
               <div className="p-8">
                 <p className="eyebrow uppercase">{active.category}</p>
                 <h3 className="mt-2 font-display text-2xl text-cream">{active.title}</h3>
+                {(active.role || active.year) && (
+                  <p className="mt-1 text-xs text-mute">
+                    {[active.role, active.year].filter(Boolean).join(' · ')}
+                  </p>
+                )}
                 <p className="mt-3 text-sm leading-relaxed text-mute">{active.description}</p>
                 <div className="mt-6 flex gap-4">
                   {active.link_url && (
