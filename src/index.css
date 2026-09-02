@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #0A0908;
+    color: #F2EDE4;
+    font-family: 'DM Sans', sans-serif;
+  }
+  ::selection {
+    background: #AB892C;
+    color: #0A0908;
+  }
+  :focus-visible {
+    outline: 2px solid #C9A96A;
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.08em;
+    color: #9C9488;
+    font-size: 0.8125rem;
+  }
+  .hairline {
+    border-color: rgba(242,237,228,0.12);
+  }
+  .btn-gold {
+    @apply inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-gold-light;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border hairline px-6 py-3 text-sm font-medium text-cream transition-colors hover:border-gold-light hover:text-gold-light;
+  }
+}
