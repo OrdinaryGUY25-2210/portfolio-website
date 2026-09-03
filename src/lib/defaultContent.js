@@ -24,6 +24,7 @@ export const defaultContent = {
     ctaHref: '#portfolio',
     yearsLabel: 'Years EXP',
     years: '8+',
+    backgroundImage: '',
   },
   stats: [
     { label: 'Tahun Pengalaman', value: '8+' },

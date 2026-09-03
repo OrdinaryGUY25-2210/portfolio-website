@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Reveal from '../components/Reveal'
+import CornerMark from '../components/CornerMark'
 import { supabase, supabaseConfigured } from '../lib/supabaseClient'
 
 // Full pages added from Developer Mode → Halaman & Section → Tambah Halaman.
@@ -66,6 +67,7 @@ export default function DynamicPage({ site }) {
         </div>
       </main>
       <Footer data={content.footer} />
+      <CornerMark />
     </div>
   )
 }

@@ -5,7 +5,8 @@ Website portfolio Studio D13 — dibangun agar bekerja **sebagai portfolio**: me
 - Menu navigasi slide-in (posisi kanan/kiri diatur dari Developer Mode)
 - Halaman login terpisah di `/developer` untuk masuk ke **Developer Mode**
 - Di Developer Mode: sidebar dengan 6 kontrol — **Portfolio**, **Pencapaian**, **Testimoni**, **Konten Website**, **Tampilan** (warna & font, tanpa deploy ulang), dan **Halaman & Section** (tambah section baru di homepage, atau tambah halaman baru dengan URL sendiri)
-- Setiap kolom form di Developer Mode punya contoh pengisian di bawahnya
+- Setiap kolom form di Developer Mode punya contoh pengisian di bawahnya, dan panel Live Preview yang update seketika saat diketik
+- Field gambar bisa diisi lewat URL manual, **atau** klik "Pilih Gambar" untuk upload dari galeri/penyimpanan perangkat — otomatis dikompres ke WebP dan disimpan di Google Drive kamu sendiri
 - Data disimpan di **Supabase** (database + auth) — bisa diedit tanpa deploy ulang
 - Responsif dan accessible di semua device (mobile, tablet, desktop) — kontras warna, fokus keyboard terlihat, dan menghormati pengaturan "reduced motion" di perangkat
 
@@ -98,17 +99,41 @@ Cara ini paling cepat kalau tidak mau pakai GitHub, tapi env variable Supabase h
 1. Buka `https://domain-anda.com/developer`.
 2. Login dengan email + password yang dibuat di langkah 1.4 (Supabase Authentication).
 3. Di sidebar dashboard ada 6 kontrol:
-   - **Portfolio** — tambah/edit/hapus karya. Setiap kolom (judul, kategori, peran, tahun, deskripsi, URL gambar, link project, urutan) punya contoh pengisian di bawahnya.
-   - **Pencapaian** — bagian "bukti" portfolio: milestone, sertifikasi, penghargaan. Tampil tepat setelah Hero.
-   - **Testimoni** — tambah/edit/hapus testimoni klien.
-   - **Konten Website** — pilih section (hero, layanan, harga, proses, about, kontak, faq, footer) dan edit isinya sebagai JSON, lalu simpan.
-   - **Tampilan** — ubah warna background/aksen (color picker), pilih pasangan font dari 3 opsi, dan ubah posisi menu (kanan/kiri) — berlaku langsung tanpa deploy ulang.
-   - **Halaman & Section** — dua kontrol:
+   - **Portfolio** — tambah/edit/hapus karya. Setiap kolom (judul, kategori, peran, tahun, deskripsi, URL gambar, link project, urutan) punya contoh pengisian di bawahnya, dan panel **Live Preview** di sebelah form yang update seketika saat kamu mengetik.
+   - **Pencapaian** — bagian "bukti" portfolio: milestone, sertifikasi, penghargaan. Tampil tepat setelah Hero. Live preview juga aktif di sini.
+   - **Testimoni** — tambah/edit/hapus testimoni klien, dengan live preview.
+   - **Konten Website** — pilih section (hero, layanan, harga, proses, about, kontak, faq, footer), edit sebagai JSON, dan lihat **Live Preview** di panel sebelah kanan yang otomatis update tiap kali JSON diketik ulang (kalau JSON belum valid, preview menunggu sampai formatnya benar). Khusus section **hero** ada kolom cepat "Gambar Background Hero" — isi URL gambar untuk kasih kedalaman di section hero yang tadinya polos, atau kosongkan untuk kembali flat.
+   - **Tampilan** — ubah warna background/aksen (color picker), pilih pasangan font dari 3 opsi, dan ubah posisi menu (kanan/kiri). Perubahan **langsung terlihat live** di halaman dashboard itu sendiri (tombol, teks, dsb ikut berubah warna seketika) karena pakai variabel CSS yang sama dengan website publik — klik Simpan untuk membuat perubahan permanen, atau pindah tab tanpa Simpan untuk otomatis kembali ke versi tersimpan.
+   - **Halaman & Section** — dua kontrol, keduanya dengan live preview:
      - *Tambah Section*: menambah blok konten baru di homepage (judul, isi, gambar, tombol opsional), muncul setelah FAQ.
      - *Tambah Halaman*: membuat halaman baru dengan URL sendiri (`domain-anda.com/slug-anda`), bisa dimunculkan di menu navigasi.
 4. Perubahan langsung tampil di website publik setelah disimpan (tidak perlu deploy ulang).
 
-Untuk gambar (foto project, avatar testimoni, gambar section), upload dulu ke layanan hosting gambar mana pun (Supabase Storage, Imgur, dll), lalu tempel URL-nya ke field "URL Gambar".
+Untuk gambar (foto project, avatar testimoni, gambar section), klik **"Pilih Gambar"** di field terkait untuk upload langsung dari galeri/penyimpanan perangkat (otomatis dikompres ke WebP dan disimpan di Google Drive kamu — lihat Langkah 5), atau tempel URL gambar dari mana pun secara manual.
+
+---
+
+## 5. Setup Google Drive untuk Upload Gambar (opsional)
+
+Tanpa langkah ini, field gambar tetap bisa diisi manual (tempel URL gambar dari mana saja). Langkah ini hanya untuk mengaktifkan tombol **"Pilih Gambar"** di Developer Mode — buka galeri/penyimpanan perangkat, otomatis kompres ke WebP, lalu upload ke Google Drive kamu sendiri dan tempel link publiknya otomatis.
+
+1. Buka [console.cloud.google.com](https://console.cloud.google.com) → buat project baru (atau pakai yang sudah ada).
+2. Buka **APIs & Services → Library** → cari **Google Drive API** → klik **Enable**.
+3. Buka **APIs & Services → OAuth consent screen**:
+   - User Type: **External** (kalau bukan Google Workspace) → Create.
+   - Isi nama app (mis. "Studio D13 Website"), email support, email developer contact → Save and Continue sampai selesai.
+   - Di bagian **Test users** (kalau app masih status "Testing"), tambahkan email Google kamu sendiri — supaya kamu bisa login walau app belum diverifikasi Google.
+4. Buka **APIs & Services → Credentials** → **Create Credentials → OAuth client ID**:
+   - Application type: **Web application**.
+   - **Authorized JavaScript origins**: tambahkan URL website kamu, misalnya `https://studio-d13-website.vercel.app` (dan domain custom kalau ada). Tidak perlu menambahkan localhost karena tidak dikerjakan lokal.
+   - Klik **Create** → salin **Client ID** yang muncul (formatnya `xxxxx.apps.googleusercontent.com`).
+5. Tambahkan sebagai Environment Variable di Vercel/Netlify:
+   | Name | Value |
+   |---|---|
+   | `VITE_GOOGLE_CLIENT_ID` | Client ID dari langkah 4 |
+6. Redeploy. Sekarang tombol "Pilih Gambar" di Developer Mode akan memunculkan popup login Google saat pertama kali dipakai (sekali per sesi) — setelah diizinkan, upload berjalan otomatis.
+
+Catatan: aplikasi ini hanya minta izin `drive.file`, yaitu hanya bisa mengelola file yang **dia sendiri upload** — tidak bisa membaca atau menjelajahi file lain di Drive kamu. File yang diupload otomatis dibuat "siapa saja dengan link bisa lihat" supaya bisa tampil di website publik.
 
 ---
 
@@ -126,7 +151,9 @@ supabase/schema.sql → jalankan sekali di Supabase SQL Editor
 
 ## Catatan teknis
 
-- **Posisi menu**: drawer menu default slide dari **kanan**. Untuk ganti ke kiri, buka `src/components/Navbar.jsx`, ubah baris `const DRAWER_SIDE = 'right'` menjadi `'left'`.
+- **Posisi menu**: drawer menu default slide dari **kanan**, sekarang diatur dari Developer Mode → Tampilan (bukan hardcode di kode lagi).
+- **Live preview**: bekerja dengan merender ulang komponen ringkas di dalam dashboard begitu draft berubah — bukan mengintip browser publik. Untuk Tampilan (warna/font), yang dipakai adalah CSS variable yang sama dengan website publik, jadi begitu disimpan, hasilnya identik di halaman utama.
+- **Ruang kosong / whitespace**: ada penanda kecil "STUDIO D13" di pojok kiri bawah tiap halaman (`CornerMark`) yang memanfaatkan sudut layar yang biasanya kosong, dan badge tahun pengalaman di Hero dipindah ke pojok kanan bawah section (di layar medium ke atas) alih-alih mengambang di tengah. Di layar kecil, elemen-elemen ini otomatis kembali ke alur normal.
 - **Fallback tanpa Supabase**: kalau env variable belum diisi, website tetap tampil normal pakai konten default di `src/lib/defaultContent.js` — hanya form kontak dan Developer Mode yang butuh Supabase aktif.
-- **Font**: Fraunces (display/heading) + DM Sans (body), dimuat dari Google Fonts di `index.html`.
+- **Font**: 3 pasangan tersedia — Fraunces + DM Sans (default), Playfair Display + Inter, Cormorant Garamond + Work Sans — semuanya sudah dimuat di `index.html` supaya ganti pasangan langsung terasa tanpa loading tambahan.
 - **Update fitur berikutnya**: struktur ini sengaja dibuat modular (satu file per section, satu hook untuk data) supaya gampang ditambah fitur baru nanti — tinggal bilang fitur apa yang mau ditambahkan.

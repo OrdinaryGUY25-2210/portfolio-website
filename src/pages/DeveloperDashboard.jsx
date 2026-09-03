@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
 import { defaultContent } from '../lib/defaultContent'
-import { FONT_PAIRS } from '../components/ThemeProvider'
+import { FONT_PAIRS, applyThemeVars } from '../components/ThemeProvider'
+import MiniPreview, { ItemMiniCard } from '../components/MiniPreview'
+import ImagePicker from '../components/ImagePicker'
 
 const NAV = [
   { key: 'portfolio', label: 'Portfolio' },
@@ -78,7 +80,7 @@ export default function DeveloperDashboard({ site }) {
                     { name: 'role', label: 'Peran / Yang Dikerjakan', example: 'Design & Development' },
                     { name: 'year', label: 'Tahun', example: '2026' },
                     { name: 'description', label: 'Deskripsi', textarea: true, example: 'Website company profile untuk brand kopi lokal, fokus pada storytelling produk.' },
-                    { name: 'image_url', label: 'URL Gambar', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/kopi-nusantara.jpg' },
+                    { name: 'image_url', label: 'Gambar', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
                     { name: 'link_url', label: 'URL Project (opsional)', example: 'https://kopinusantara.com' },
                     { name: 'sort_order', label: 'Urutan', number: true, example: '1 (angka lebih kecil tampil lebih dulu)' },
                   ]}
@@ -103,7 +105,7 @@ export default function DeveloperDashboard({ site }) {
                     { name: 'name', label: 'Nama', example: 'Budi Santoso' },
                     { name: 'role', label: 'Role / Jabatan', example: 'Pemilik Kopi Nusantara' },
                     { name: 'quote', label: 'Testimoni', textarea: true, example: 'Prosesnya jelas dari awal sampai akhir, hasilnya sesuai brief.' },
-                    { name: 'avatar_url', label: 'URL Foto (opsional)', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/budi.jpg' },
+                    { name: 'avatar_url', label: 'Foto (opsional)', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
                     { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
                   ]}
                 />
@@ -163,45 +165,59 @@ function CollectionEditor({ table, items, emptyItem, fields, onSaved, titleKey =
       </div>
 
       {editingId && (
-        <div className="mt-6 rounded-2xl border hairline bg-panel p-6">
-          <div className="grid gap-5 sm:grid-cols-2">
-            {fields.map((f) => (
-              <div key={f.name} className={f.textarea ? 'sm:col-span-2' : ''}>
-                <label className="eyebrow uppercase">{f.label}</label>
-                {f.textarea ? (
-                  <textarea
-                    rows={3}
-                    value={draft[f.name] ?? ''}
-                    onChange={(e) => setDraft((d) => ({ ...d, [f.name]: e.target.value }))}
-                    className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
-                  />
-                ) : f.checkbox ? (
-                  <div className="mt-2">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(draft[f.name])}
-                      onChange={(e) => setDraft((d) => ({ ...d, [f.name]: e.target.checked }))}
-                      className="h-4 w-4"
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_280px]">
+          <div className="rounded-2xl border hairline bg-panel p-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              {fields.map((f) => (
+                <div key={f.name} className={f.textarea || f.image ? 'sm:col-span-2' : ''}>
+                  <label className="eyebrow uppercase">{f.label}</label>
+                  {f.image ? (
+                    <div className="mt-2">
+                      <ImagePicker
+                        value={draft[f.name]}
+                        onChange={(url) => setDraft((d) => ({ ...d, [f.name]: url }))}
+                        example={f.example}
+                      />
+                    </div>
+                  ) : f.textarea ? (
+                    <textarea
+                      rows={3}
+                      value={draft[f.name] ?? ''}
+                      onChange={(e) => setDraft((d) => ({ ...d, [f.name]: e.target.value }))}
+                      className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
                     />
-                  </div>
-                ) : (
-                  <input
-                    type={f.number ? 'number' : 'text'}
-                    value={draft[f.name] ?? ''}
-                    onChange={(e) => setDraft((d) => ({ ...d, [f.name]: f.number ? Number(e.target.value) : e.target.value }))}
-                    className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
-                  />
-                )}
-                {f.example && <p className="mt-1.5 text-xs text-mute">Contoh: {f.example}</p>}
-              </div>
-            ))}
+                  ) : f.checkbox ? (
+                    <div className="mt-2">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(draft[f.name])}
+                        onChange={(e) => setDraft((d) => ({ ...d, [f.name]: e.target.checked }))}
+                        className="h-4 w-4"
+                      />
+                    </div>
+                  ) : (
+                    <input
+                      type={f.number ? 'number' : 'text'}
+                      value={draft[f.name] ?? ''}
+                      onChange={(e) => setDraft((d) => ({ ...d, [f.name]: f.number ? Number(e.target.value) : e.target.value }))}
+                      className="mt-2 w-full rounded-lg border hairline bg-panel2 p-3 text-sm text-cream outline-none focus:border-gold-light"
+                    />
+                  )}
+                  {f.example && !f.image && <p className="mt-1.5 text-xs text-mute">Contoh: {f.example}</p>}
+                </div>
+              ))}
+            </div>
+            {error && <p className="mt-4 text-sm text-gold-light">{error}</p>}
+            <div className="mt-6 flex gap-3">
+              <button type="button" onClick={save} disabled={saving} className="btn-gold !py-2 !px-5 text-xs disabled:opacity-60">
+                {saving ? 'Menyimpan…' : 'Simpan'}
+              </button>
+              <button type="button" onClick={cancel} className="btn-ghost !py-2 !px-5 text-xs">Batal</button>
+            </div>
           </div>
-          {error && <p className="mt-4 text-sm text-gold-light">{error}</p>}
-          <div className="mt-6 flex gap-3">
-            <button type="button" onClick={save} disabled={saving} className="btn-gold !py-2 !px-5 text-xs disabled:opacity-60">
-              {saving ? 'Menyimpan…' : 'Simpan'}
-            </button>
-            <button type="button" onClick={cancel} className="btn-ghost !py-2 !px-5 text-xs">Batal</button>
+          <div>
+            <p className="eyebrow mb-2 uppercase">Live Preview</p>
+            <ItemMiniCard item={draft} />
           </div>
         </div>
       )}
@@ -236,6 +252,21 @@ function ContentEditor({ content, onSaved }) {
     setError('')
   }
 
+  let previewData = null
+  try {
+    previewData = JSON.parse(draft)
+  } catch {
+    previewData = null
+  }
+
+  // Quick field for hero.backgroundImage — the one field worth a dedicated
+  // control instead of hunting for it inside the JSON.
+  const setHeroField = (key, value) => {
+    if (!previewData) return
+    const updated = { ...previewData, [key]: value }
+    setDraft(JSON.stringify(updated, null, 2))
+  }
+
   const save = async () => {
     setError('')
     let parsed
@@ -255,7 +286,7 @@ function ContentEditor({ content, onSaved }) {
   }
 
   return (
-    <div className="grid gap-8 md:grid-cols-[200px_1fr]">
+    <div className="grid gap-8 md:grid-cols-[160px_1fr]">
       <nav className="flex flex-row flex-wrap gap-2 md:flex-col">
         {CONTENT_SECTIONS.map((s) => (
           <button
@@ -270,21 +301,49 @@ function ContentEditor({ content, onSaved }) {
           </button>
         ))}
       </nav>
-      <div>
-        <p className="text-sm text-mute">
-          Edit bagian <span className="text-cream">{section}</span> sebagai JSON, lalu simpan. Contoh: ganti teks di antara tanda kutip <code>"..."</code>, jangan hapus tanda kurung <code>{'{ }'}</code> atau <code>[ ]</code>.
-        </p>
-        <textarea
-          rows={20}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          spellCheck={false}
-          className="mt-4 w-full rounded-xl border hairline bg-panel p-4 font-mono text-xs text-cream outline-none focus:border-gold-light"
-        />
-        {error && <p className="mt-3 text-sm text-gold-light">{error}</p>}
-        <button type="button" onClick={save} disabled={saving} className="btn-gold mt-4 !py-2 !px-5 text-xs disabled:opacity-60">
-          {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
-        </button>
+
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div>
+          <p className="text-sm text-mute">
+            Edit bagian <span className="text-cream">{section}</span> sebagai JSON, lalu simpan. Contoh: ganti teks di antara tanda kutip <code>"..."</code>, jangan hapus tanda kurung <code>{'{ }'}</code> atau <code>[ ]</code>.
+          </p>
+
+          {section === 'hero' && previewData && (
+            <div className="mt-4 rounded-xl border hairline bg-panel p-4">
+              <label className="eyebrow uppercase">Gambar Background Hero</label>
+              <div className="mt-2">
+                <ImagePicker
+                  value={previewData.backgroundImage}
+                  onChange={(url) => setHeroField('backgroundImage', url)}
+                  example="https://drive.google.com/uc?export=view&id=... — kosongkan untuk kembali polos tanpa gambar"
+                />
+              </div>
+            </div>
+          )}
+
+          <textarea
+            rows={18}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            spellCheck={false}
+            className="mt-4 w-full rounded-xl border hairline bg-panel p-4 font-mono text-xs text-cream outline-none focus:border-gold-light"
+          />
+          {error && <p className="mt-3 text-sm text-gold-light">{error}</p>}
+          <button type="button" onClick={save} disabled={saving} className="btn-gold mt-4 !py-2 !px-5 text-xs disabled:opacity-60">
+            {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
+          </button>
+        </div>
+
+        <div>
+          <p className="eyebrow mb-2 uppercase">Live Preview</p>
+          {previewData ? (
+            <MiniPreview section={section} data={previewData} />
+          ) : (
+            <p className="rounded-xl border hairline p-4 text-xs text-mute">
+              JSON belum valid — preview muncul lagi setelah diperbaiki.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -294,6 +353,19 @@ function AppearanceEditor({ theme, onSaved }) {
   const [draft, setDraft] = useState(theme)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  // Live preview: every change is applied to the whole site immediately
+  // (same CSS variables the real pages read from) — no save needed to see it.
+  useEffect(() => {
+    applyThemeVars(draft)
+  }, [draft])
+
+  // If they leave this tab without saving, put the last *saved* theme back
+  // so the live preview doesn't linger as if it were persisted.
+  useEffect(() => {
+    return () => applyThemeVars(theme)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const set = (key, value) => setDraft((d) => ({ ...d, [key]: value }))
 
@@ -319,7 +391,9 @@ function AppearanceEditor({ theme, onSaved }) {
 
   return (
     <div className="max-w-xl">
-      <p className="text-sm text-mute">Ubah warna, tipografi, dan posisi menu — berlaku langsung tanpa perlu deploy ulang.</p>
+      <p className="text-sm text-mute">
+        Ubah warna, tipografi, dan posisi menu — perubahan langsung terlihat di halaman ini juga (termasuk warna tombol di bawah), karena pakai variabel yang sama dengan website publik. Klik Simpan untuk membuat perubahan permanen di website; kalau pindah tab tanpa Simpan, tampilan otomatis kembali ke versi tersimpan.
+      </p>
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
         {colorFields.map((f) => (
@@ -412,7 +486,7 @@ function PagesEditor({ customSections, customPages, onSaved }) {
                   { name: 'title', label: 'Judul Section', example: 'Proses Kolaborasi' },
                   { name: 'subtitle', label: 'Eyebrow / Label Kecil (opsional)', example: 'TAMBAHAN' },
                   { name: 'body', label: 'Isi / Paragraf', textarea: true, example: 'Jelaskan section ini dalam beberapa kalimat. Baris baru akan tetap terlihat di halaman.' },
-                  { name: 'image_url', label: 'URL Gambar (opsional)', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/section.jpg' },
+                  { name: 'image_url', label: 'Gambar (opsional)', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
                   { name: 'cta_label', label: 'Teks Tombol (opsional)', example: 'Pelajari Lebih Lanjut' },
                   { name: 'cta_href', label: 'Link Tombol (opsional)', example: '#contact atau https://...' },
                   { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
@@ -434,7 +508,7 @@ function PagesEditor({ customSections, customPages, onSaved }) {
                   { name: 'nav_label', label: 'Label di Menu (opsional)', example: 'Sertifikat' },
                   { name: 'subtitle', label: 'Eyebrow / Label Kecil (opsional)', example: 'DOKUMENTASI' },
                   { name: 'body', label: 'Isi Halaman', textarea: true, example: 'Tulis isi lengkap halaman ini. Baris baru akan tetap terlihat.' },
-                  { name: 'image_url', label: 'URL Gambar (opsional)', example: 'https://xxxx.supabase.co/storage/v1/object/public/media/sertifikat.jpg' },
+                  { name: 'image_url', label: 'Gambar (opsional)', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
                   { name: 'show_in_nav', label: 'Tampilkan di Menu', checkbox: true },
                   { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
                 ]}

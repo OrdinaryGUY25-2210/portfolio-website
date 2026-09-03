@@ -8,22 +8,27 @@ export const FONT_PAIRS = {
   'cormorant-worksans': { label: 'Cormorant Garamond + Work Sans', display: "'Cormorant Garamond', serif", body: "'Work Sans', sans-serif" },
 }
 
-// Applies `theme` content (colors + font pair) from Supabase as CSS custom
-// properties on <html>, so the whole site re-themes instantly without a
-// rebuild. Falls back silently to the defaults already set in index.css.
+// Writes a theme object onto <html> as CSS custom properties. Shared by
+// ThemeProvider (applies the saved theme on load) and Developer Mode's
+// Tampilan tab (applies a draft theme live, before it's saved) — so both
+// paths update the exact same variables the whole site already reads from.
+export function applyThemeVars(theme) {
+  if (!theme) return
+  const root = document.documentElement.style
+  if (theme.bg) root.setProperty('--color-bg', theme.bg)
+  if (theme.panel) root.setProperty('--color-panel', theme.panel)
+  if (theme.cream) root.setProperty('--color-cream', theme.cream)
+  if (theme.mute) root.setProperty('--color-mute', theme.mute)
+  if (theme.gold) root.setProperty('--color-gold', theme.gold)
+  if (theme.goldLight) root.setProperty('--color-gold-light', theme.goldLight)
+  const pair = FONT_PAIRS[theme.fontPair] ?? FONT_PAIRS['fraunces-dmsans']
+  root.setProperty('--font-display', pair.display)
+  root.setProperty('--font-body', pair.body)
+}
+
 export default function ThemeProvider({ theme, children }) {
   useEffect(() => {
-    if (!theme) return
-    const root = document.documentElement.style
-    if (theme.bg) root.setProperty('--color-bg', theme.bg)
-    if (theme.panel) root.setProperty('--color-panel', theme.panel)
-    if (theme.cream) root.setProperty('--color-cream', theme.cream)
-    if (theme.mute) root.setProperty('--color-mute', theme.mute)
-    if (theme.gold) root.setProperty('--color-gold', theme.gold)
-    if (theme.goldLight) root.setProperty('--color-gold-light', theme.goldLight)
-    const pair = FONT_PAIRS[theme.fontPair] ?? FONT_PAIRS['fraunces-dmsans']
-    root.setProperty('--font-display', pair.display)
-    root.setProperty('--font-body', pair.body)
+    applyThemeVars(theme)
   }, [theme])
 
   return children

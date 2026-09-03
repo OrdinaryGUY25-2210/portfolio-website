@@ -1,5 +1,6 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import CornerMark from '../components/CornerMark'
 import Hero from '../sections/Hero'
 import Achievements from '../sections/Achievements'
 import Stats from '../sections/Stats'
@@ -36,6 +37,7 @@ export default function Home({ site }) {
         <CustomSections items={customSections} />
       </main>
       <Footer data={content.footer} />
+      <CornerMark />
     </div>
   )
 }
