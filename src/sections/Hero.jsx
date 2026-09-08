@@ -9,7 +9,8 @@ export default function Hero({ data }) {
             src={data.backgroundImage}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: `center ${data.backgroundPosition ?? 35}%` }}
           />
           {/* Strongest right where the name/CTA sit (bottom), fading out toward
               the top so the face up top stays clear of text and overlay both. */}

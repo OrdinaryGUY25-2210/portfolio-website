@@ -20,7 +20,12 @@ function HeroMini({ data }) {
     <div className="relative overflow-hidden rounded-lg">
       {data.backgroundImage && (
         <>
-          <img src={data.backgroundImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={data.backgroundImage}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: `center ${data.backgroundPosition ?? 35}%` }}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40" />
         </>
       )}

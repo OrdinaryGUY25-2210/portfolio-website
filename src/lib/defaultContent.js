@@ -25,6 +25,7 @@ export const defaultContent = {
     yearsLabel: 'Years EXP',
     years: '8+',
     backgroundImage: '',
+    backgroundPosition: 35, // vertical focal point of backgroundImage, 0 (atas) – 100 (bawah)
   },
   stats: [
     { label: 'Tahun Pengalaman', value: '8+' },

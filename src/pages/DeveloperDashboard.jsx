@@ -318,6 +318,25 @@ function ContentEditor({ content, onSaved }) {
                   example="https://xxxxx.supabase.co/storage/v1/object/public/images/... — kosongkan untuk kembali polos tanpa gambar"
                 />
               </div>
+
+              {previewData.backgroundImage && (
+                <div className="mt-4">
+                  <label className="eyebrow uppercase">
+                    Posisi Foto (fokus wajah) — {previewData.backgroundPosition ?? 35}%
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={previewData.backgroundPosition ?? 35}
+                    onChange={(e) => setHeroField('backgroundPosition', Number(e.target.value))}
+                    className="mt-2 w-full accent-gold"
+                  />
+                  <p className="mt-1 text-xs text-mute">
+                    Geser ke kiri (0%) kalau wajah ada di bagian atas foto, ke kanan (100%) kalau wajah ada di bagian bawah foto. Lihat panel Live Preview di sebelah kanan sambil digeser.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
