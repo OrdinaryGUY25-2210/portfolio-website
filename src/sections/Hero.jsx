@@ -2,17 +2,19 @@ import Reveal from '../components/Reveal'
 
 export default function Hero({ data }) {
   return (
-    <section id="home" className="relative flex min-h-screen items-center overflow-hidden border-b hairline px-6 pt-24">
+    <section id="home" className="relative flex min-h-screen items-end overflow-hidden border-b hairline px-6 pb-16 pt-24">
       {data.backgroundImage && (
         <>
           <img
             src={data.backgroundImage}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-top"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40" />
-          <div className="absolute inset-0 bg-ink/30" />
+          {/* Strongest right where the name/CTA sit (bottom), fading out toward
+              the top so the face up top stays clear of text and overlay both. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/10 to-transparent" style={{ height: '55%', top: 'auto', bottom: 0 }} />
         </>
       )}
 
@@ -22,7 +24,7 @@ export default function Hero({ data }) {
             <p className="eyebrow uppercase">{data.eyebrow}</p>
           </Reveal>
           <Reveal delay={0.08}>
-            <h1 className="mt-6 font-display text-[13vw] leading-[0.95] text-cream md:text-[6.5rem]">
+            <h1 className="mt-6 font-display text-[clamp(2.75rem,13vw,4.5rem)] leading-[0.95] text-cream md:text-[6.5rem]">
               {data.nameLine1}
               <br />
               <span className="italic text-gold-light">{data.nameLine2}</span>
