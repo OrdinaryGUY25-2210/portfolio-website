@@ -80,7 +80,7 @@ export default function DeveloperDashboard({ site }) {
                     { name: 'role', label: 'Peran / Yang Dikerjakan', example: 'Design & Development' },
                     { name: 'year', label: 'Tahun', example: '2026' },
                     { name: 'description', label: 'Deskripsi', textarea: true, example: 'Website company profile untuk brand kopi lokal, fokus pada storytelling produk.' },
-                    { name: 'image_url', label: 'Gambar', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
+                    { name: 'image_url', label: 'Gambar', image: true, example: 'https://xxxxx.supabase.co/storage/v1/object/public/images/... (atau klik Pilih Gambar)' },
                     { name: 'link_url', label: 'URL Project (opsional)', example: 'https://kopinusantara.com' },
                     { name: 'sort_order', label: 'Urutan', number: true, example: '1 (angka lebih kecil tampil lebih dulu)' },
                   ]}
@@ -105,7 +105,7 @@ export default function DeveloperDashboard({ site }) {
                     { name: 'name', label: 'Nama', example: 'Budi Santoso' },
                     { name: 'role', label: 'Role / Jabatan', example: 'Pemilik Kopi Nusantara' },
                     { name: 'quote', label: 'Testimoni', textarea: true, example: 'Prosesnya jelas dari awal sampai akhir, hasilnya sesuai brief.' },
-                    { name: 'avatar_url', label: 'Foto (opsional)', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
+                    { name: 'avatar_url', label: 'Foto (opsional)', image: true, example: 'https://xxxxx.supabase.co/storage/v1/object/public/images/... (atau klik Pilih Gambar)' },
                     { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
                   ]}
                 />
@@ -315,7 +315,7 @@ function ContentEditor({ content, onSaved }) {
                 <ImagePicker
                   value={previewData.backgroundImage}
                   onChange={(url) => setHeroField('backgroundImage', url)}
-                  example="https://drive.google.com/uc?export=view&id=... — kosongkan untuk kembali polos tanpa gambar"
+                  example="https://xxxxx.supabase.co/storage/v1/object/public/images/... — kosongkan untuk kembali polos tanpa gambar"
                 />
               </div>
             </div>
@@ -486,7 +486,7 @@ function PagesEditor({ customSections, customPages, onSaved }) {
                   { name: 'title', label: 'Judul Section', example: 'Proses Kolaborasi' },
                   { name: 'subtitle', label: 'Eyebrow / Label Kecil (opsional)', example: 'TAMBAHAN' },
                   { name: 'body', label: 'Isi / Paragraf', textarea: true, example: 'Jelaskan section ini dalam beberapa kalimat. Baris baru akan tetap terlihat di halaman.' },
-                  { name: 'image_url', label: 'Gambar (opsional)', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
+                  { name: 'image_url', label: 'Gambar (opsional)', image: true, example: 'https://xxxxx.supabase.co/storage/v1/object/public/images/... (atau klik Pilih Gambar)' },
                   { name: 'cta_label', label: 'Teks Tombol (opsional)', example: 'Pelajari Lebih Lanjut' },
                   { name: 'cta_href', label: 'Link Tombol (opsional)', example: '#contact atau https://...' },
                   { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
@@ -508,7 +508,7 @@ function PagesEditor({ customSections, customPages, onSaved }) {
                   { name: 'nav_label', label: 'Label di Menu (opsional)', example: 'Sertifikat' },
                   { name: 'subtitle', label: 'Eyebrow / Label Kecil (opsional)', example: 'DOKUMENTASI' },
                   { name: 'body', label: 'Isi Halaman', textarea: true, example: 'Tulis isi lengkap halaman ini. Baris baru akan tetap terlihat.' },
-                  { name: 'image_url', label: 'Gambar (opsional)', image: true, example: 'https://drive.google.com/uc?export=view&id=... (atau klik Pilih Gambar)' },
+                  { name: 'image_url', label: 'Gambar (opsional)', image: true, example: 'https://xxxxx.supabase.co/storage/v1/object/public/images/... (atau klik Pilih Gambar)' },
                   { name: 'show_in_nav', label: 'Tampilkan di Menu', checkbox: true },
                   { name: 'sort_order', label: 'Urutan', number: true, example: '1' },
                 ]}

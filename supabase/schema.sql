@@ -117,3 +117,21 @@ create policy "authenticated can read contact_submissions" on contact_submission
   for select using (auth.role() = 'authenticated');
 create policy "authenticated can delete contact_submissions" on contact_submissions
   for delete using (auth.role() = 'authenticated');
+
+-- 5) Storage bucket untuk gambar yang diupload lewat tombol "Pilih Gambar"
+-- di Developer Mode (otomatis dikompres ke WebP oleh browser sebelum diupload).
+insert into storage.buckets (id, name, public)
+values ('images', 'images', true)
+on conflict (id) do nothing;
+
+-- Siapa saja boleh melihat/mengunduh gambar (supaya tampil di website publik)
+create policy "public can read images" on storage.objects
+  for select using (bucket_id = 'images');
+
+-- Hanya user yang login (Developer Mode) yang boleh upload / timpa / hapus gambar
+create policy "authenticated can upload images" on storage.objects
+  for insert with check (bucket_id = 'images' and auth.role() = 'authenticated');
+create policy "authenticated can update images" on storage.objects
+  for update using (bucket_id = 'images' and auth.role() = 'authenticated');
+create policy "authenticated can delete images" on storage.objects
+  for delete using (bucket_id = 'images' and auth.role() = 'authenticated');

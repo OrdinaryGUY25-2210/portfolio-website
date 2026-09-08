@@ -6,7 +6,7 @@ Website portfolio Studio D13 — dibangun agar bekerja **sebagai portfolio**: me
 - Halaman login terpisah di `/developer` untuk masuk ke **Developer Mode**
 - Di Developer Mode: sidebar dengan 6 kontrol — **Portfolio**, **Pencapaian**, **Testimoni**, **Konten Website**, **Tampilan** (warna & font, tanpa deploy ulang), dan **Halaman & Section** (tambah section baru di homepage, atau tambah halaman baru dengan URL sendiri)
 - Setiap kolom form di Developer Mode punya contoh pengisian di bawahnya, dan panel Live Preview yang update seketika saat diketik
-- Field gambar bisa diisi lewat URL manual, **atau** klik "Pilih Gambar" untuk upload dari galeri/penyimpanan perangkat — otomatis dikompres ke WebP dan disimpan di Google Drive kamu sendiri
+- Field gambar bisa diisi lewat URL manual, **atau** klik "Pilih Gambar" untuk upload dari galeri/penyimpanan perangkat — otomatis dikompres ke WebP dan disimpan di Supabase Storage
 - Data disimpan di **Supabase** (database + auth) — bisa diedit tanpa deploy ulang
 - Responsif dan accessible di semua device (mobile, tablet, desktop) — kontras warna, fokus keyboard terlihat, dan menghormati pengaturan "reduced motion" di perangkat
 
@@ -19,7 +19,8 @@ Semua langkah di bawah ini dilakukan lewat **browser** — tidak perlu install N
 1. Buka [supabase.com](https://supabase.com) → masuk ke project Supabase yang sudah Anda punya.
 2. Di sidebar kiri, buka **SQL Editor** → **New query**.
 3. Buka file `supabase/schema.sql` di project ini, salin semua isinya, tempel ke SQL Editor, lalu klik **Run**.
-   Ini akan membuat 4 tabel (`site_content`, `portfolio_items`, `testimonials`, `contact_submissions`) beserta aturan keamanan (Row Level Security): siapa saja bisa **membaca** konten, tapi hanya Anda yang **login** yang bisa menambah/edit/hapus.
+   Ini akan membuat semua tabel konten (`site_content`, `portfolio_items`, `testimonials`, `achievements`, `custom_sections`, `custom_pages`, `contact_submissions`) beserta aturan keamanan (Row Level Security): siapa saja bisa **membaca** konten, tapi hanya Anda yang **login** yang bisa menambah/edit/hapus.
+   Perintah ini juga otomatis membuat **bucket Storage bernama `images`** (public) tempat semua gambar yang diupload lewat tombol "Pilih Gambar" di Developer Mode disimpan — tidak ada langkah tambahan yang perlu dilakukan manual di menu Storage.
 4. Buka menu **Authentication → Users** → **Add user** → buat 1 akun (email + password) untuk Anda sendiri. Ini akun yang dipakai login di `/developer`.
 5. Buka menu **Project Settings → API**. Catat dua nilai ini:
    - **Project URL** → contoh `https://xxxxx.supabase.co`
@@ -109,31 +110,25 @@ Cara ini paling cepat kalau tidak mau pakai GitHub, tapi env variable Supabase h
      - *Tambah Halaman*: membuat halaman baru dengan URL sendiri (`domain-anda.com/slug-anda`), bisa dimunculkan di menu navigasi.
 4. Perubahan langsung tampil di website publik setelah disimpan (tidak perlu deploy ulang).
 
-Untuk gambar (foto project, avatar testimoni, gambar section), klik **"Pilih Gambar"** di field terkait untuk upload langsung dari galeri/penyimpanan perangkat (otomatis dikompres ke WebP dan disimpan di Google Drive kamu — lihat Langkah 5), atau tempel URL gambar dari mana pun secara manual.
+Untuk gambar (foto project, avatar testimoni, gambar section), klik **"Pilih Gambar"** di field terkait untuk upload langsung dari galeri/penyimpanan perangkat (otomatis dikompres ke WebP dan disimpan di Supabase Storage — lihat Langkah 5), atau tempel URL gambar dari mana pun secara manual.
 
 ---
 
-## 5. Setup Google Drive untuk Upload Gambar (opsional)
+## 5. Setup Supabase Storage untuk Upload Gambar
 
-Tanpa langkah ini, field gambar tetap bisa diisi manual (tempel URL gambar dari mana saja). Langkah ini hanya untuk mengaktifkan tombol **"Pilih Gambar"** di Developer Mode — buka galeri/penyimpanan perangkat, otomatis kompres ke WebP, lalu upload ke Google Drive kamu sendiri dan tempel link publiknya otomatis.
+**Tidak ada setup manual tambahan** — bucket Storage bernama `images` sudah otomatis dibuat saat Anda menjalankan `supabase/schema.sql` di Langkah 1.3, lengkap dengan aturan aksesnya:
+- Siapa saja boleh **melihat** gambar (supaya tampil di website publik).
+- Hanya Anda yang **login** di Developer Mode yang boleh **upload/hapus** gambar.
 
-1. Buka [console.cloud.google.com](https://console.cloud.google.com) → buat project baru (atau pakai yang sudah ada).
-2. Buka **APIs & Services → Library** → cari **Google Drive API** → klik **Enable**.
-3. Buka **APIs & Services → OAuth consent screen**:
-   - User Type: **External** (kalau bukan Google Workspace) → Create.
-   - Isi nama app (mis. "Studio D13 Website"), email support, email developer contact → Save and Continue sampai selesai.
-   - Di bagian **Test users** (kalau app masih status "Testing"), tambahkan email Google kamu sendiri — supaya kamu bisa login walau app belum diverifikasi Google.
-4. Buka **APIs & Services → Credentials** → **Create Credentials → OAuth client ID**:
-   - Application type: **Web application**.
-   - **Authorized JavaScript origins**: tambahkan URL website kamu, misalnya `https://studio-d13-website.vercel.app` (dan domain custom kalau ada). Tidak perlu menambahkan localhost karena tidak dikerjakan lokal.
-   - Klik **Create** → salin **Client ID** yang muncul (formatnya `xxxxx.apps.googleusercontent.com`).
-5. Tambahkan sebagai Environment Variable di Vercel/Netlify:
-   | Name | Value |
-   |---|---|
-   | `VITE_GOOGLE_CLIENT_ID` | Client ID dari langkah 4 |
-6. Redeploy. Sekarang tombol "Pilih Gambar" di Developer Mode akan memunculkan popup login Google saat pertama kali dipakai (sekali per sesi) — setelah diizinkan, upload berjalan otomatis.
+Cara pakainya di Developer Mode:
+1. Klik **"Pilih Gambar"** di field gambar mana pun (Portfolio, Testimoni, Pencapaian, Section, Halaman, atau Hero Background).
+2. Pilih file dari galeri/penyimpanan perangkat.
+3. Otomatis diproses lewat 2 tahap:
+   - **Kompres ke WebP** — dilakukan di browser Anda sendiri (Canvas API), gambar diperkecil maksimal lebar 1600px dan dikonversi ke format WebP (ukuran file jauh lebih kecil, kualitas tetap bagus). Tidak butuh server tambahan.
+   - **Upload ke Supabase Storage** — file `.webp` hasil kompres diupload ke bucket `images`, lalu URL publiknya otomatis ditempel ke field gambar.
+4. Field gambar tetap bisa diisi manual (tempel URL dari mana saja) kalau tidak mau upload lewat tombol ini.
 
-Catatan: aplikasi ini hanya minta izin `drive.file`, yaitu hanya bisa mengelola file yang **dia sendiri upload** — tidak bisa membaca atau menjelajahi file lain di Drive kamu. File yang diupload otomatis dibuat "siapa saja dengan link bisa lihat" supaya bisa tampil di website publik.
+**Kalau muncul error "Bucket images belum dibuat"**: berarti Langkah 1.3 belum dijalankan atau gagal — buka Supabase Dashboard → **SQL Editor**, jalankan ulang isi `supabase/schema.sql`, lalu coba upload lagi. Anda juga bisa cek manual di menu **Storage** di Supabase Dashboard — harus ada bucket bernama `images` dengan status **Public**.
 
 ---
 
@@ -145,7 +140,7 @@ src/
   pages/            → Home.jsx, DeveloperLogin.jsx, DeveloperDashboard.jsx
   components/       → Navbar (drawer menu), Footer, Reveal (efek scroll), ProtectedRoute
   context/          → AuthContext (session Supabase)
-  lib/              → supabaseClient, defaultContent (fallback), useSiteContent (fetch hook)
+  lib/              → supabaseClient, supabaseStorage (upload gambar), imageCompress (kompres ke WebP), defaultContent (fallback), useSiteContent (fetch hook)
 supabase/schema.sql → jalankan sekali di Supabase SQL Editor
 ```
 

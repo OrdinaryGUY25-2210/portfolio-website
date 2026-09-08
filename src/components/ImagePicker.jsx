@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react'
 import { compressToWebp } from '../lib/imageCompress'
-import { getAccessToken, uploadImageToDrive } from '../lib/googleDrive'
-
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+import { uploadImageToStorage } from '../lib/supabaseStorage'
 
 export default function ImagePicker({ value, onChange, example }) {
   const inputRef = useRef(null)
@@ -16,20 +14,13 @@ export default function ImagePicker({ value, onChange, example }) {
     e.target.value = '' // allow picking the same file again later
     if (!file) return
 
-    if (!CLIENT_ID) {
-      setError('Upload ke Drive belum aktif — VITE_GOOGLE_CLIENT_ID belum diset di Environment Variables. Tempel URL gambar manual, atau lihat README bagian Google Drive.')
-      return
-    }
-
     setError('')
     try {
       setStatus('compressing')
       const webp = await compressToWebp(file)
 
       setStatus('uploading')
-      const accessToken = await getAccessToken(CLIENT_ID)
-      const filename = `${file.name.replace(/\.[^./]+$/, '') || 'gambar'}.webp`
-      const url = await uploadImageToDrive({ accessToken, blob: webp, filename })
+      const url = await uploadImageToStorage({ blob: webp, filename: file.name })
 
       onChange(url)
     } catch (err) {
@@ -70,7 +61,7 @@ export default function ImagePicker({ value, onChange, example }) {
           {error && <p className="text-xs text-gold-light">{error}</p>}
           {!error && example && <p className="text-xs text-mute">Contoh: {example}</p>}
           <p className="mt-0.5 text-xs text-mute">
-            "Pilih Gambar" membuka galeri/penyimpanan perangkat, otomatis dikompres ke WebP lalu diunggah ke Google Drive kamu.
+            "Pilih Gambar" membuka galeri/penyimpanan perangkat, otomatis dikompres ke WebP lalu diunggah ke Supabase Storage.
           </p>
         </div>
       </div>
