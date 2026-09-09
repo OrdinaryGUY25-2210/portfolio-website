@@ -13,7 +13,7 @@ export default function Footer({ data }) {
             <p className="eyebrow uppercase">Halaman</p>
             <ul className="mt-4 space-y-2 text-sm text-mute">
               <li><a href="#about" className="hover:text-cream">Studio D13</a></li>
-              <li><a href="#services" className="hover:text-cream">Layanan</a></li>
+              <li><a href="#services" className="hover:text-cream">Keahlian</a></li>
               <li><a href="#contact" className="hover:text-cream">Kontak</a></li>
             </ul>
           </div>

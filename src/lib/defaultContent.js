@@ -2,9 +2,9 @@
 // missing from Supabase `site_content`. Edit these directly for a quick
 // content change without touching the database, or use Developer Mode.
 //
-// This site is framed as a PORTFOLIO first: what Aldi has built, what he's
-// capable of, and proof of it — not a sales landing page. Achievements and
-// Portfolio carry the most weight; Services/Pricing/Process support it.
+// This site is a PURE PORTFOLIO: what Aldi has built, what he's capable of,
+// and the purpose behind each piece — no pricing, no "how we work" payment
+// steps, no hire-me sales pitch. Achievements and Portfolio carry the weight.
 export const defaultContent = {
   theme: {
     fontPair: 'fraunces-dmsans', // 'fraunces-dmsans' | 'playfair-inter' | 'cormorant-worksans'
@@ -59,97 +59,24 @@ export const defaultContent = {
       },
     ],
   },
-  pricing: {
-    eyebrow: 'HARGA',
-    title: 'Paket Harga',
-    subtitle:
-      'Untuk yang sudah lihat karya dan siap kolaborasi — ini gambaran scope dan durasinya.',
-    tiers: [
-      {
-        name: 'Landing Page',
-        tag: 'Starter',
-        duration: '3–5 hari kerja',
-        price: '',
-        highlighted: false,
-        features: [
-          'Landing page modern & fast loading',
-          'Optimalisasi mobile & desktop view',
-          'Interactive floating chatbot pada website',
-          'Free garansi teknis 14 hari setelah publish',
-        ],
-      },
-      {
-        name: 'Company Profile',
-        tag: 'Business',
-        duration: '7–10 hari kerja',
-        price: '',
-        highlighted: true,
-        features: [
-          'Multi-page website',
-          'Smart chatbot dengan integrasi WhatsApp',
-          'Fitur UI/UX tingkat lanjut',
-          'Integration setup',
-          'Garansi bug & pemeliharaan teknis 30 hari',
-        ],
-      },
-      {
-        name: 'Custom CMS',
-        tag: 'Premium',
-        duration: '14–21 hari kerja',
-        price: '8.500.000+',
-        highlighted: false,
-        features: [
-          'Custom high-performance website',
-          'Advanced chatbot system dengan penyimpanan data (database / CRM / sheets)',
-          'Fitur enterprise & CMS kompleks',
-          'Premium SEO setup + performance & security optimization',
-          'Prioritas dukungan teknis & garansi maintenance hingga 3 bulan',
-          'Dokumentasi lengkap alur kerja sistem / database',
-        ],
-      },
-    ],
-    footnote:
-      'Butuh kombinasi di luar paket ini? Diskusikan kebutuhan Anda — harga & scope custom menyesuaikan.',
-  },
-  process: {
-    eyebrow: 'PROSES',
-    title: 'Cara Kerja',
-    subtitle: 'Empat tahap sederhana dari brief pertama sampai file di tangan Anda.',
-    steps: [
-      { day: 'Hari ke-1', title: 'Brief & DP', description: 'Diskusi kebutuhan, referensi, dan budget lewat WA/form. Mulai pengerjaan setelah DP 50%.' },
-      { day: 'Menyesuaikan scope', title: 'Draft & Konsep', description: 'Draft/moodboard awal dikirim untuk direview — di sinilah arah desain dikunci bareng-bareng.' },
-      { day: 'Sesuai paket', title: 'Revisi', description: 'Penyesuaian berdasarkan feedback sampai hasil disetujui bersama.' },
-      { day: '1×24 jam', title: 'Pelunasan & Handoff', description: 'Pelunasan 50% terakhir, lalu file final & akses dikirim — siap pakai atau publish.' },
-    ],
-    footnote: 'Estimasi waktu menyesuaikan scope & paket — detail durasi per paket ada di bagian Harga.',
-  },
   about: {
     eyebrow: 'STUDIO',
     title: 'Tentang Studio D13',
     quote: 'Desain yang baik bukan hanya indah — ia memecahkan masalah dan membangun kepercayaan.',
-    body: 'Bagi saya, desain bukan sekadar mempercantik tampilan — tapi alat bisnis yang bekerja untuk brand Anda. Portfolio ini sendiri adalah contohnya: dibangun, bukan cuma dipajang.',
+    body: 'Bagi saya, desain bukan sekadar mempercantik tampilan — tapi cara berpikir yang bekerja untuk setiap masalah yang dihadapi. Portfolio ini sendiri adalah contohnya: dibangun, bukan cuma dipajang.',
     skills: ['Framer', 'Figma', 'Adobe Suite', 'UI/UX Design', 'Brand Identity', 'Photography', 'Videography'],
   },
   contact: {
     eyebrow: 'KONTAK',
-    title: 'Mari Berkolaborasi Bersama',
+    title: 'Terhubung',
+    subtitle: 'Ada pertanyaan tentang salah satu karya, atau sekadar mau menyapa? Kirim pesan lewat form ini.',
     whatsapp: '+62 821-9489-9129',
     email: 'alditriantama56@gmail.com',
     location: 'Indonesia, Sulawesi Tengah, Palu',
-    availability: 'Tersedia untuk Proyek Baru',
-    services: ['No-Code Web Development', 'Branding', 'Lainnya'],
-  },
-  faq: {
-    eyebrow: 'FAQ',
-    items: [
-      { q: 'Berapa lama pengerjaan proyek?', a: 'Tergantung paket dan kompleksitas — mulai 3 hari untuk landing page hingga 21 hari untuk custom CMS. Detail per paket ada di bagian Harga.' },
-      { q: 'Menerima klien dari luar Palu?', a: 'Ya! Saya terbuka untuk klien dari seluruh Indonesia dan internasional. Semua komunikasi dan pengiriman file via online.' },
-      { q: 'Sistem pembayaran bagaimana?', a: 'DP 50% di awal untuk mulai pengerjaan, pelunasan 50% setelah revisi final disetujui dan sebelum file dikirim.' },
-    ],
   },
   footer: {
     brand: 'Studio D13',
-    tagline: 'Portfolio & studio desain kreatif berbasis di Palu, Sulawesi Tengah. Graphic design, UI/UX, dan produk digital.',
+    tagline: 'Portfolio karya kreatif berbasis di Palu, Sulawesi Tengah. Graphic design, UI/UX, dan produk digital.',
     location: 'Palu, Sulawesi Tengah 🇮🇩',
     social: [
       { label: 'Instagram', href: '#' },
@@ -169,10 +96,12 @@ export const defaultAchievements = [
   { id: 'seed-3', title: 'Ebook Series — UI/UX & Visual Creator Master Guide', issuer: 'Studio D13', year: '2026', description: 'Menulis dan mendesain dua ebook panduan dengan sistem desain Fraunces/DM Sans.', sort_order: 3 },
 ]
 
+// Setiap karya punya "tujuan" (goal) — masalah apa yang coba dipecahkan,
+// bukan cuma sekadar dipajang. Ditampilkan di kartu & detail karya.
 export const defaultPortfolioItems = [
-  { id: 'seed-1', title: 'Company Profile — Kopi Nusantara', category: 'UI/UX Design', role: 'Design & Development', year: '2026', description: 'Website company profile untuk brand kopi lokal.', image_url: '', link_url: '', sort_order: 1 },
-  { id: 'seed-2', title: 'Brand Identity — Playbox Palu', category: 'Brand Identity', role: 'Branding', year: '2026', description: 'Logo dan identitas visual untuk bisnis rental PlayStation.', image_url: '', link_url: '', sort_order: 2 },
-  { id: 'seed-3', title: 'Landing Page — Studio D13', category: 'Framer Template', role: 'Design & Development', year: '2026', description: 'Landing page portfolio dengan efek reveal dan grid masonry.', image_url: '', link_url: '', sort_order: 3 },
+  { id: 'seed-1', title: 'Company Profile — Kopi Nusantara', category: 'UI/UX Design', role: 'Design & Development', year: '2026', goal: 'Membantu brand kopi lokal punya kehadiran online yang mencerminkan kualitas produknya, bukan sekadar company profile generik.', description: 'Website company profile untuk brand kopi lokal.', image_url: '', link_url: '', sort_order: 1 },
+  { id: 'seed-2', title: 'Brand Identity — Playbox Palu', category: 'Brand Identity', role: 'Branding', year: '2026', goal: 'Memberi identitas visual yang mudah dikenali di tengah ramainya bisnis rental game sejenis di kota yang sama.', description: 'Logo dan identitas visual untuk bisnis rental PlayStation.', image_url: '', link_url: '', sort_order: 2 },
+  { id: 'seed-3', title: 'Landing Page — Studio D13', category: 'Framer Template', role: 'Design & Development', year: '2026', goal: 'Membuktikan lewat portfolio ini sendiri bahwa desain yang baik juga harus dibangun dengan baik, bukan cuma didesain.', description: 'Landing page portfolio dengan efek reveal dan grid masonry.', image_url: '', link_url: '', sort_order: 3 },
 ]
 
 export const defaultTestimonials = [

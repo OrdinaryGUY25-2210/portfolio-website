@@ -18,7 +18,7 @@ const NAV = [
 
 const CONTENT_SECTIONS = Object.keys(defaultContent).filter((s) => s !== 'theme')
 
-const emptyPortfolioItem = { title: '', category: '', role: '', year: '', description: '', image_url: '', link_url: '', sort_order: 0 }
+const emptyPortfolioItem = { title: '', category: '', role: '', year: '', goal: '', description: '', image_url: '', link_url: '', sort_order: 0 }
 const emptyAchievement = { title: '', issuer: '', year: '', description: '', sort_order: 0 }
 const emptyTestimonial = { name: '', role: '', quote: '', avatar_url: '', sort_order: 0 }
 const emptySection = { title: '', subtitle: '', body: '', image_url: '', cta_label: '', cta_href: '', sort_order: 0 }
@@ -79,6 +79,7 @@ export default function DeveloperDashboard({ site }) {
                     { name: 'category', label: 'Kategori', example: 'UI/UX Design' },
                     { name: 'role', label: 'Peran / Yang Dikerjakan', example: 'Design & Development' },
                     { name: 'year', label: 'Tahun', example: '2026' },
+                    { name: 'goal', label: 'Tujuan Karya (apa yang mau dipecahkan)', textarea: true, example: 'Membantu brand kopi lokal punya kehadiran online yang mencerminkan kualitas produknya.' },
                     { name: 'description', label: 'Deskripsi', textarea: true, example: 'Website company profile untuk brand kopi lokal, fokus pada storytelling produk.' },
                     { name: 'image_url', label: 'Gambar', image: true, example: 'https://xxxxx.supabase.co/storage/v1/object/public/images/... (atau klik Pilih Gambar)' },
                     { name: 'link_url', label: 'URL Project (opsional)', example: 'https://kopinusantara.com' },
@@ -496,7 +497,7 @@ function PagesEditor({ customSections, customPages, onSaved }) {
         {subTab === 'sections' ? (
           <>
             <p className="text-sm text-mute">
-              Section baru tampil di halaman utama, setelah FAQ dan sebelum footer, urut sesuai kolom Urutan.
+              Section baru tampil di halaman utama, setelah Kontak dan sebelum footer, urut sesuai kolom Urutan.
             </p>
             <div className="mt-6">
               <CollectionEditor table="custom_sections" items={customSections} emptyItem={emptySection} onSaved={onSaved}

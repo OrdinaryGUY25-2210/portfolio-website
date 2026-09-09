@@ -13,12 +13,21 @@ create table if not exists portfolio_items (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   category text,
+  role text,
+  year text,
+  goal text, -- tujuan/masalah yang coba dipecahkan lewat karya ini
   description text,
   image_url text,
   link_url text,
   sort_order int not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- Kalau tabel ini sudah pernah dibuat sebelumnya (versi lama tanpa role/year/goal),
+-- baris ini menambahkan kolom yang belum ada tanpa menghapus data yang sudah ada.
+alter table portfolio_items add column if not exists role text;
+alter table portfolio_items add column if not exists year text;
+alter table portfolio_items add column if not exists goal text;
 
 -- 3) Testimoni klien
 create table if not exists testimonials (

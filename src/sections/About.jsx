@@ -6,7 +6,7 @@ export default function About({ data }) {
       <div className="mx-auto grid max-w-6xl gap-14 md:grid-cols-[1fr_1fr]">
         <Reveal>
           <p className="eyebrow uppercase">{data.eyebrow}</p>
-          <h2 className="mt-3 font-display text-4xl text-cream md:text-5xl">{data.title}</h2>
+          <h2 className="underline-accent mt-3 font-display text-4xl text-cream md:text-5xl">{data.title}</h2>
           <p className="mt-8 max-w-prose font-display text-2xl italic leading-snug text-gold-light">
             “{data.quote}”
           </p>

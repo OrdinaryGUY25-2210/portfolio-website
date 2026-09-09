@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Reveal from '../components/Reveal'
 import CornerMark from '../components/CornerMark'
+import { DynamicPageSkeleton } from '../components/PageSkeleton'
 import { supabase, supabaseConfigured } from '../lib/supabaseClient'
 
 // Full pages added from Developer Mode → Halaman & Section → Tambah Halaman.
@@ -28,11 +29,7 @@ export default function DynamicPage({ site }) {
   }, [slug])
 
   if (page === undefined) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-ink">
-        <p className="eyebrow uppercase text-mute">Memuat…</p>
-      </div>
-    )
+    return <DynamicPageSkeleton />
   }
 
   if (page === null) {

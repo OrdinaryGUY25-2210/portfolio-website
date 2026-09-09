@@ -47,7 +47,7 @@ export default function Navbar({ drawerSide = 'right', customPages = [] }) {
                 {l.label}
               </a>
             ))}
-            <a href="#contact" className="btn-gold !py-2 !px-5 text-xs">Diskusi Proyek</a>
+            <a href="#contact" className="btn-gold !py-2 !px-5 text-xs">Hubungi Saya</a>
           </nav>
           <button
             type="button"
