@@ -16,12 +16,14 @@ export default function Achievements({ items }) {
             <Reveal
               key={item.id}
               delay={i * 0.06}
-              className="relative overflow-hidden border-l-2 border-gold-light/40 pl-5 pr-2 pt-1"
+              className="border-l-2 border-gold-light/40 pl-5 pr-2 pt-1"
             >
-              <span className="pointer-events-none absolute -right-1 -top-3 select-none font-display text-6xl italic text-cream/[0.05]">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              {item.year && <p className="eyebrow uppercase">{item.year}</p>}
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-xl italic text-gold-light/50">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                {item.year && <p className="eyebrow uppercase">{item.year}</p>}
+              </div>
               <h3 className="mt-2 font-display text-xl text-cream">{item.title}</h3>
               {item.issuer && <p className="mt-1 text-xs text-mute">{item.issuer}</p>}
               {item.description && <p className="mt-3 text-sm leading-relaxed text-mute">{item.description}</p>}
